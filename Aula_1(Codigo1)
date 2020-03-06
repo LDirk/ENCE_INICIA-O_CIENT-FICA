@@ -1,0 +1,22 @@
+---
+title: "R noot"
+date: "11/09/2017"
+output:
+  html_document:
+    df_print: paged
+autor: nome
+---
+
+
+
+``` {r}
+x = rnorm(100, 0, 1)
+hist(x)
+
+mean(x)
+sd(x)
+min(x)
+max(x)
+
+
+````
