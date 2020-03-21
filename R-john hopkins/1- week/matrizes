@@ -1,0 +1,54 @@
+#Matrizes são tipos de vetores
+
+#Criando uma matriz vazia
+
+m = matrix(nrow = 2, ncol = 3)
+print(m)
+#     [,1] [,2] [,3]
+#[1,]   NA   NA   NA
+#[2,]   NA   NA   NA
+
+
+#dimensão de uma matriz:
+
+print(dim(m))
+#[1] 2 3 
+#2 linhas e 3 colunas 
+
+#Criar matriz na qual seus elementos sao umas sequencia
+
+m = matrix(1:6, nrow = 2, ncol = 3)
+print(m)
+#     [,1] [,2] [,3]
+#[1,]    1    3    5
+#[2,]    2    4    6
+
+#Transformar um vetor em uma matriz 
+
+m = 1: 10 
+dim(m) = c(2,5)
+print(m)
+#     [,1] [,2] [,3] [,4] [,5]
+#[1,]    1    3    5    7    9
+#[2,]    2    4    6    8   10
+
+
+#Outra forma de criar matriz, cbind e rbind
+#Coluna e linha, respectivamente
+
+x = 1:3 
+y = 10:12 
+print(cbind(x,y))
+#     x  y
+#[1,] 1 10
+#[2,] 2 11
+#[3,] 3 12
+
+
+x = 1:3 
+y = 10:12 
+print(rbind(x,y))
+
+#   [,1] [,2] [,3]
+#x    1    2    3
+#y   10   11   12
