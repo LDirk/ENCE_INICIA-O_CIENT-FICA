@@ -1,0 +1,25 @@
+#Factors são tipos de vetores que é usado para armazenar dados categoricos
+
+x = factor(c("yes","yes","no","yes","no"))
+print(x)
+#[1] yes yes no  yes no 
+#Levels: no yes
+
+# table mostra a frequencia dos valores 
+
+print(table(x))
+#x
+#no yes 
+#2   3
+
+#Unclass serve para retirar a classe e transformar em um vetor de inteiros
+
+print(unclass(x))
+#[1] 2 2 1 2 1
+#attr(,"levels")
+#[1] "no"  "yes"
+
+#Caso eu queria inverter a ordem dos levels
+
+x = factor(c("yes","yes","no","yes","no"),
+           levels = c("yes","no"))
