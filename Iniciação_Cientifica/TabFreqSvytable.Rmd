@@ -1,0 +1,210 @@
+---
+title: "Tabelas_frequencia_Svytable"
+author: "LucasDirk"
+date: "28/10/2020"
+output: html_document
+---
+
+
+
+
+# Carregando pacotes necessários. 
+```{r}
+library(srvyr)
+library("dplyr")
+library("readxl")
+library(survival)
+library(survey)
+library(flexsurv)
+library(devtools)
+
+# Lendo os dados da pensi 2015. 
+BaseBR2015 = read.csv2(file = 'arquivos csv/PENSE_AMOSTRA1_ALUNOESCOLA.csv',header=T,sep=";")
+
+
+
+# Aplicação do desenho da amostra. 
+desenho = svydesign(id =~ escola,
+                    
+  strata =~ ESTRATOGEOREG,
+  weights =~ as.numeric(PESO),
+  data = BaseBR2015,
+  nest = T)
+```
+
+
+```{r}
+dicionario = read_excel( "Dicionario_PENSE_Microdados_Amostra1.xls")
+```
+
+
+
+# Alunos por região 
+
+```{r}
+# Comando Utilizado para Obter os valores svytable(~factor(REGEOGR),desenho)
+
+regiao = c("Norte","Nordeste","Sudeste","Sul","Centro-Oeste")
+
+valores = c(251415.4, 729138.0, 1141441.4,  312089.8, 196750.2)
+
+porce = 100/sum(valores)
+  
+porcentagem = c(c(251415.4*porce, 729138.0*porce, 1141441.4*porce,  312089.8*porce, 196750.2*porce))
+
+tabela = data.frame(Regiões = regiao, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+```
+
+
+# Alunos por sexo 
+```{r}
+# Comando Utilizado para Obter os valores svytable(~factor(VB01001),desenho)
+
+sexo = c ("Masculino", "Feminimo")
+
+valores = c(1281656, 1349178 )
+
+porce = 100/sum(valores) 
+
+porcentagem = c(1281656*porce, 1349178*porce)
+
+tabela = data.frame(Sexo = sexo, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+
+# Alunos por Cor 
+
+```{r}
+# Comando utilizado svytable(~factor(VB01002),desenho)
+
+cor = c("Branca","Preta","Amarela","Parda","Indigena","Não informado")
+
+valores = c(949722.874, 351793.175,  108091.898, 1131256.339, 86614.625, 3355.826)
+
+porce = 100/sum(valores)
+
+porcentagem = c(949722.874*porce, 351793.175*porce,  108091.898*porce, 1131256.339*porce, 86614.625*porce, 3355.826*porce)
+
+tabela = data.frame( Cor = cor, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+```
+
+# Alunos por idade 
+
+```{r}
+# Comando utilizado svytable(~factor(VB01003),desenho)
+
+idade = c ("11 anos ou menos","12 anos","13 anos","14 anos","15 anos","16 anos","17 anos", "18 anos","19 anos ou mais")
+
+valores = c(1189.634, 9438.959, 469393.176, 1342095.938, 520353.618, 189023.626, 66901.482, 19605.976, 12832.328)
+
+porce = 100/sum(valores)
+
+porcentagem = c(1189.634*porce, 9438.959*porce, 469393.176*porce, 1342095.938*porce, 520353.618*porce, 189023.626*porce, 66901.482*porce, 19605.976*porce, 12832.328*porce)
+
+tabela = data.frame( Idade = idade, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+
+# Uso de drogas 
+
+```{r}
+# Comando utilizado svytable(~factor(VB06001),desenho)
+
+# Pergunta: Alguma vez na vida, você ja utilizou alguma droga como maconha, crack, lolo, etc ? 
+
+consumo = c("Sim","Não","Não informado")
+
+valores = c(235570.530, 2388358.092, 6906.116 )
+
+porce = 100/sum(valores)
+
+porcentagem = c(235570.530*porce, 2388358.092*porce, 6906.116*porce)
+
+tabela = data.frame( Consumo = consumo, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+# Escolaridade da mãe 
+
+
+```{r}
+
+# Comando utilizado svytable(~factor(VB01008A),desenho)
+# Juntando as variáveis categóricas 
+
+escolaridade = c("Não estudou", "Ensino Fundamental", "Ensino médio","Ensino Superior","Não sei","Não informado")
+
+valores = c(141290.092+508581.713,169658.064+158901.934, 472771.710+119381.838,347928.476,705918.453, 6402.458)
+
+porce = 100/sum(valores)
+
+
+porcentagem = c((141290.092+508581.713)*porce,(169658.064+158901.934)*porce, (472771.710+119381.838)*porce,347928.476*porce,705918.453*porce, 6402.458*porce)
+
+
+tabela = data.frame( Escolaridade = escolaridade, Valores = valores, Porcentagem = porcentagem)
+tabela
+
+```
+
+
+# Dependencia administrativa da escola 
+
+```{r}
+# Comando utilizado svytable(~factor(V0007),desenho)
+
+adm = c("Publica", "Privada")
+
+valores = c(2250463.2, 380371.5)
+'
+porce = 100/sum(valores)
+
+porcentagem =c(2250463.2*porce, 380371.5*porce)
+
+tabela = data.frame( Administração = adm , Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+# Consumo de bebida alcoolica 
+
+```{r}
+# Comando utilizado svytable(~factor(VB05002),desenho)
+
+# Pergunta: Alguma vez na vida você tomou uma dose de bebida alcoólica? (Uma dose equivale a uma lata de cerveja ou uma taça de vinho ou uma dose de cachaça ou uísque etc)
+
+consumo = c("Sim","Não", "Não informado") 
+
+valores = c(1390062.115, 1234050.194, 6722.428)
+
+porce = 100/sum(valores)
+
+porcentagem = c(1390062.115*porce, 1234050.194*porce, 6722.428*porce)
+
+tabela = data.frame(Consumo = consumo, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,193 @@
+---
+title: "Tabelas de frequência"
+author: "LucasDirk"
+date: "19/10/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Tabelas de frequência das variaveis relevantes para a análise da iniciação sexual. 
+# Estas variaveis estão presente na amostra 1 da pense 2015 
+# https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html?caminho=pense/2015/microdados/
+
+
+# Carregando pacotes necessários. 
+```{r}
+library(srvyr)
+library("dplyr")
+library("readxl")
+library(survival)
+library(survey)
+library(flexsurv)
+library(devtools)
+
+
+
+# Lendo os dados da pensi 2015. 
+
+BaseBR2015 = read.csv2(file = 'arquivos csv/PENSE_AMOSTRA1_ALUNOESCOLA.csv',header=T,sep=";")
+
+
+
+# Aplicação do desenho da amostra. 
+
+desenho = svydesign(id =~ escola,
+  strata =~ ESTRATOGEOREG,
+  weights =~ as.numeric(PESO),
+  data = BaseBR2015,
+  nest = T)
+```
+
+# Abrindo o dicionário dos dados.
+
+```{r}
+dicionario = read_excel( "Dicionario_PENSE_Microdados_Amostra1.xls")
+```
+
+
+
+# Fazendo a tabela de frequência da quantidade de alunos por região da amostra. 
+# Usando o comando table(REGEOGR) para verificar a quantidade.
+# svytable(~(REGEOGR),desenho) gera uma tabela de contigencia?
+
+```{r}
+
+######################### Região dos alunos da amostra #########################
+regiao = c("Norte","Nordeste","Sudeste","Sul","Centro-Oeste")
+valores = c(23937, 36334,17772, 9850, 14179 )
+soma = 23937 + 36334 + 17772 + 9850 + 14179
+porcentagem = c((23937/soma)*100,(36334/soma)*100,(17772/soma)*100,(9850/soma)*100,(14179/soma)*100)
+tabela = data.frame(Regiões = regiao, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+
+# Fazendo a tabela da frequência da quantidade de alunos por sexo. 
+# table(VB01001)
+
+
+```{r}
+
+############################## Alunos por sexo ################################
+
+sexo = c ("Masculino", "Feminimo")
+valores = c(49290,52782)
+soma = 49290+52782
+
+porcentagem = c((49290/soma)*100,(52782/soma)*100)
+
+tabela = data.frame(Sexo = sexo, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+# Fazendo a tabela de frequência da quantidade de alunos por cor. 
+# table(VB01002)
+
+```{r}
+
+
+#################### Alunos por cor ########################################
+
+cor = c("Branca","Preta","Amarela","Parda","Indigena","Não informado")
+valores = c (33775, 12849,  4580, 46935,   3825,   108 )
+soma = 33775+ 12849 + 4580+ 46935 + 3825 +  108 
+
+porcentagem = c(33775*100/soma, 12849*100/soma ,4580*100/soma ,46935*100/soma ,3825*100/soma ,108*100/soma)
+
+tabela = data.frame( Cor = cor, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+```
+
+
+# Fazendo a tabela de frequencia da quantidade de alunos por idade. 
+# table(VB01003)
+
+```{r}
+
+####################### Alunos por idade ###########################
+
+idade = c ("11 anos ou menos","12 anos","13 anos","14 anos","15 anos","16 anos","17 anos", "18 anos","19 anos ou mais")
+
+valores = c(28, 510, 16722, 51611, 20864, 7873, 3040, 852, 572)
+
+soma = 28+510 +16722+ 51611+ 20864+  7873 + 3040  + 852 +  572
+
+porcentagem = c(28*100/soma, 510*100/soma, 16722*100/soma, 51611*100/soma, 20864*100/soma, 7873*100/soma, 3040*100/soma, 852*100/soma, 572*100/soma)
+
+tabela = data.frame( Idade = idade, Valores = valores, Porcentagem = porcentagem)
+tabela
+
+```
+
+
+
+# Fazendo a tabela de frequencia sobre o uso de drogas. 
+# table(VB06001)
+
+```{r}
+
+
+############### Consumo de drogas ###############################
+consumo = c("Sim","Não","Não informado")
+
+valores = c(8656, 93144, 272)
+
+soma = 8656+93144+272
+
+porcentagem = c(8656*100/soma, 93144*100/soma, 272*100/soma)
+
+
+tabela = data.frame( Consumo = consumo, Valores = valores, Porcentagem = porcentagem)
+tabela
+
+```
+
+
+# Fazendo a tabela de frequencia da escolaridade da mãe 
+# table(VB01008A)
+
+
+```{r}
+
+################ Escolaridade da mãe ###########################
+
+escolaridade = c('Minha mãe não estudou','Minha mãe começou o ensino fundamental ou 1º grau, mas não terminou',"Minha mãe terminou o ensino fundamental ou 1º grau",'Minha mãe começou o ensino médio ou 2º grau, mas não terminou','Minha mãe terminou o ensino médio ou 2° grau','Minha mãe começou a faculdade (ensino superior), mas não terminou','Minha mãe terminou a faculdade (ensino superior)','Não sei','Não informado')
+
+valores = c(5531, 18217, 6024, 6275 ,17903,  5456 ,17232, 25183, 251)
+
+
+soma = 5531+ 18217+ 6024+ 6275+17903+  5456 +17232+ 25183+251
+
+porcentagem = c(5531*100/soma, 18217*100/soma, 6024*100/soma, 6275*100/soma ,17903*100/soma,  5456*100/soma ,17232*100/soma, 25183*100/soma, 251*100/soma)
+
+tabela = data.frame( Escolaridade = escolaridade, Valores = valores, Porcentagem = porcentagem)
+tabela
+
+```
+
+
+# Fazendo a tabela de frequencia sobre as dependencias administrativas da escola 
+# table(V0007) 
+
+
+```{r}
+
+########################## Dependencia administrativa da escola ################
+
+adm = c("Publica", "Privada")
+valores = c(81154, 20918) 
+soma = 81154 + 20918 
+
+porcentagem = c(81154*100/soma, 20918*100/soma) 
+
+tabela = data.frame( Administração = adm , Valores = valores, Porcentagem = porcentagem)
+tabela
+
+```
+
