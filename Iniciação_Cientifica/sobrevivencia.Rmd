@@ -1,0 +1,282 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+################################
+# Carregando pacotes necessários.
+################################
+
+library(srvyr)
+library("dplyr")
+library("readxl")
+library(survival)
+library(survey)
+library(flexsurv)
+library(devtools)
+library(ggplot2)
+
+##############################
+# Lendo os dados da pensi 2015.
+##############################
+
+BaseBR2015 = read.csv2(file = 'arquivos csv/PENSE_AMOSTRA1_ALUNOESCOLA.csv',header=T, sep=";")
+attach(BaseBR2015)
+
+#####################################################################################################
+# Criando a variavel tempo e censura
+
+# 0 censura a direita, 1 falha
+
+# A variavel tempo se refere ao tempo até a primeira relação sexual (c = 1) ou a idade que o individuo
+
+# tinha na pesquisa, mas que ainda não tinha tido relação sexual (c = 0)
+
+#####################################################################################################
+
+i = 1 
+tempo = c()
+censura = c()
+
+while (i <= length(BaseBR2015$VB08002)){
+  
+  if (BaseBR2015$VB08002[i] == -1){
+    
+    tempo = append(tempo,BaseBR2015$VB01003[i])
+    censura = append(censura, 0)
+    i = i + 1
+  }  
+  
+  
+  else if (BaseBR2015$VB08002[i]>=9 && BaseBR2015$VB08002[i]<=18){
+    
+    tempo = append(tempo,BaseBR2015$VB08002[i])
+    censura = append(censura, 1)
+    i = i + 1
+  }
+    
+  
+  else if (BaseBR2015$VB08002[i] == 99 || BaseBR2015$VB08001[i] == 99){
+    tempo = append(tempo, "N.A")
+    censura = append(censura, "N.A")
+    i = i + 1
+    
+  }
+}
+
+
+
+
+###################################################################################
+# Adicionando a variavel tempo até a primeira relação sexual e censura no data frame
+###################################################################################
+BaseBR2015 <- transform(BaseBR2015, tempo=tempo, censura=censura)
+
+
+###############################
+#Aplicando o desenho da amostra. 
+###############################
+desenho = svydesign(id =~ escola,
+                    
+  strata =~ ESTRATOGEOREG,
+  weights =~ as.numeric(PESO),
+  data = BaseBR2015,
+  nest = T)
+
+```
+
+#######################################
+# Análise de sobrevivência, Kaplan-Meier
+#######################################
+```{r}
+desenhobr = subset(desenho, PAIS == 76) 
+
+```
+
+#Iniciação sexual
+```{r}
+ekm = svykm(Surv(as.numeric(tempo,censura))~1,design = desenhobr )
+
+plot(ekm,  xlab="Tempo (anos)",xlim = c(7,19), ylab="S(t) estimada")
+
+```
+
+
+# Variavel explicativa região
+```{r}
+ekm.regiao = svykm(Surv(as.numeric(tempo,censura))~REGEOGR, design = desenhobr,se=F)
+
+
+plot(ekm.regiao, ylab="S(t) estimada", xlab="Tempo(anos)",pars = list(lty=c(1,2,1,2,1),col = c("red",'black','blue','green','pink')))
+legenda = c("Norte","Nordeste","Sudeste","Sul","Centro-Oeste")
+legend("bottomleft", legenda,lwd=c(1,1),cex = 1, inset = 0.00, col = c("red",'black','blue','green','pink'),bty="n",lty = c(1,2,1,2,1))
+
+
+
+#Norte
+plot(ekm.regiao$"1", xlim = c(7,19), xlab = "Tempo(anos)", ylab="S(t) estimada", col ="red", lty = 2)
+legenda = c("Norte")
+legend("bottomleft",legenda, lwd=c(1,1),cex = 1, inset = 0.00, col = c('red'), bty="n",lty = c(2))
+
+
+#Nordeste
+
+plot(ekm.regiao$"2", xlim = c(7,19), xlab = "Tempo(anos)", ylab="S(t) estimada", col ="black", lty = 2)
+legenda = c("Nordeste")
+legend("bottomleft",legenda, lwd=c(1,1),cex = 1, inset = 0.00, col = c('black'), bty="n",lty = c(2))
+
+
+#Sudeste 
+
+plot(ekm.regiao$"3", xlim = c(7,19), xlab = "Tempo(anos)/ Nordeste", ylab="S(t) estimada", col ="blue", lty = 2)
+legenda = c("Sudeste")
+legend("bottomleft",legenda, lwd=c(1,1),cex = 1, inset = 0.00, col = c('blue'), bty="n",lty = c(2))
+
+
+# Sul 
+
+plot(ekm.regiao$"4", xlim = c(7,19), xlab = "Tempo(anos)", ylab="S(t) estimada", col ="green", lty = 2)
+legenda = c("Sul")
+legend("bottomleft",legenda, lwd=c(1,1),cex = 1, inset = 0.00, col = c('green'), bty="n",lty = c(2))
+
+
+#Centro-Oeste
+
+plot(ekm.regiao$"5", xlim = c(7,19), xlab = "Tempo(anos)", ylab="S(t) estimada", col ="pink", lty = 2)
+legenda = c("Centro-Oeste")
+legend("bottomleft",legenda, lwd=c(1,1),cex = 1, inset = 0.00, col = c('pink'), bty="n",lty = c(2))
+
+```
+
+# Variavel explicativa sexo. 
+```{r}
+ekm.sexo = svykm(Surv(as.numeric(tempo,censura))~VB01001,design=desenhobr)
+
+plot(ekm.sexo,ylab = "S(t) estimada",xlab = "Tempo (anos)",pars=list(lty=c(1,2),col=c("black","red")))
+
+Legenda<-c("Masculino","Feminino")
+
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c(1,2),bty="n", lty = c(1,2))
+
+
+```
+
+#Variavel explicativa cor. 
+
+```{r}
+
+ekm.cor = svykm(Surv(as.numeric(tempo,censura))~VB01002,design=desenhobr)
+
+plot(ekm.cor,ylab = "S(t) estimada",xlab = "Tempo (idade)"
+     ,pars=list(lty=c(1,2,1,2,1,2),col=c("black","black","red","red","blue","green")))
+
+Legenda<-c("Branca - 2015", "Preta - 2015", "Amarela - 2015", "Parda - 2015", "Indigena - 2015","Não informado")
+legend("bottomleft", Legenda,lwd=c(1,1),cex=1,inset=0.00,col=c("black","black","red","red","blue","green"),bty="n", lty = c(1,2,1,2,1,2))
+
+```
+
+# Idade 
+```{r}
+#Agrupar? 
+
+```
+
+#  Variavel explicativa Uso de drogas 
+```{r}
+ekm.drogas = svykm(Surv(as.numeric(tempo,censura))~VB06001,design=desenhobr)
+
+plot(ekm.drogas,ylab = "S(t) estimada",xlab = "Tempo (anos)"
+,pars=list(lty=c(1,2,1),col=c("black","red","Blue")))
+
+Legenda=c("Sim - 2015","Nao - 2015","Não informado")
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c(1,2,1),bty="n", lty = c(1,2,1))
+
+```
+
+#  Escolaridade da mãe.
+```{r}
+#Agrupar ???
+
+``` 
+
+
+#  Dependencia administrativa da escola.
+```{r}
+ekm.depAdm = svykm(Surv(as.numeric(tempo,censura))~V0007,design=desenhobr)
+
+plot(ekm.depAdm,ylab = "S(t) estimada",xlab = "Tempo (anos)"
+     ,pars=list(lty=c(1,2),col=c("black","black")))
+Legenda<-c("Publica","Privada")
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c(1,1),bty="n", lty = c(1,2))
+
+``` 
+
+
+#Consumo de bebida alcoolica. 
+
+```{r}
+ekm.bebidaAlcoolica = svykm(Surv(as.numeric(tempo,censura))~VB05002,design=desenhobr)
+
+plot(ekm.bebidaAlcoolica,ylab = "S(t) estimada",xlab = "Tempo (anos)", pars=list(lty=c(1,2,1),col=c("black","red","blue")))
+Legenda<-c("Sim","Nao","Não informado")
+
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c("black","red","blue"),bty ='n',lty = c(1,2,1))
+
+
+``` 
+
+
+# Orientação sobre prevenção de gravidez.
+```{r}
+ekm.OrientacaoGravidez = svykm(Surv(as.numeric(tempo,censura))~VB08008,design=desenhobr)
+
+
+plot(ekm.OrientacaoGravidez ,ylab = "S(t) estimada",xlab = "Tempo (anos)", pars=list(lty=c(1,2,1,2),col=c("black","red","blue","Green")))
+Legenda<-c("Sim","Nao","Não sei","Não informado")
+
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c("black","red","blue","Green"),bty ='n',lty = c(1,2,1,2))
+
+``` 
+
+# Orientação sobre doenças sexualmente transmissiveis. 
+
+```{r}
+ekm.OrientacaoDoencas = svykm(Surv(as.numeric(tempo,censura))~VB08009,design=desenhobr)
+
+
+plot(ekm.OrientacaoDoencas ,ylab = "S(t) estimada",xlab = "Tempo (anos)", pars=list(lty=c(1,2,1,2),col=c("black","red","blue","Green")))
+Legenda = c("Sim","Nao","Não sei","Não informado")
+
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c("black","red","blue","Green"),bty ='n',lty = c(1,2,1,2))
+
+``` 
+
+
+# Orientação sobre como conseguir preservativos gratuitamente  
+
+```{r}
+ekm.OrientacaoPreservativo = svykm(Surv(as.numeric(tempo,censura))~VB08010,design=desenhobr)
+
+
+plot(ekm.OrientacaoPreservativo ,ylab = "S(t) estimada",xlab = "Tempo (anos)", pars=list(lty=c(1,2,1,2),col=c("black","red","blue","Green")))
+Legenda = c("Sim","Nao","Não sei","Não informado")
+
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c("black","red","blue","Green"),bty ='n',lty = c(1,2,1,2))
+
+``` 
+
+#NOS ÚLTIMOS 30 DIAS, com que frequência seus pais ou responsáveis sabiam realmente o que você estava fazendo em #seu tempo livre? 
+
+```{r}
+ekm.PaisTempoLivre = svykm(Surv(as.numeric(tempo,censura))~VB07002,design=desenhobr)
+
+plot(ekm.OrientacaoPreservativo ,ylab = "S(t) estimada",xlab = "Tempo (anos)", pars=list(lty=c(1,2,1,1,2,1),col=c("black","red","blue","Green","black","red")))
+Legenda = c("Nunca", "Raramente", "As vezes", "Na maior parte do tempo", "Sempre", "Não informado")
+
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c("black","red","blue","Green","black","red"),bty ='n',lty = c(1,2,1,1,2,1))
+
+``` 
+
