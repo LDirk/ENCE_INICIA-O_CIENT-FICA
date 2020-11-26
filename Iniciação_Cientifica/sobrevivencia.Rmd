@@ -68,12 +68,31 @@ while (i <= length(BaseBR2015$VB08002)){
 }
 
 
+#Categorizando a idade em torno da mediana
+
+categoria_2015 = function(old_var,new_var){
+  clean_var = old_var[old_var != -1 & old_var != 99]
+  mediana = median(clean_var)
+  new_var = ifelse(old_var == -1,"Pulo",
+                   ifelse(old_var == 99,"NA",
+                          ifelse(old_var >= mediana,">= Mediana","< Mediana")))
+}
+
+cat_idade_2015 = categoria_2015(BaseBR2015$VB01003,y)
+
+table(cat_idade_2015)
+
+BaseBR2015 = transform(BaseBR2015, cat_idade_2015 = cat_idade_2015)
+  
+
 
 
 ###################################################################################
 # Adicionando a variavel tempo até a primeira relação sexual e censura no data frame
 ###################################################################################
 BaseBR2015 <- transform(BaseBR2015, tempo=tempo, censura=censura)
+
+names(BaseBR2015)
 
 
 ###############################
@@ -96,11 +115,21 @@ desenhobr = subset(desenho, PAIS == 76)
 
 ```
 
+
+
+
+
+
+
+
 #Iniciação sexual
 ```{r}
 ekm = svykm(Surv(as.numeric(tempo,censura))~1,design = desenhobr )
 
 plot(ekm,  xlab="Tempo (anos)",xlim = c(7,19), ylab="S(t) estimada")
+
+Legenda = c("Kaplan-Meier ")
+legend("bottomleft", Legenda)
 
 ```
 
@@ -155,7 +184,7 @@ legend("bottomleft",legenda, lwd=c(1,1),cex = 1, inset = 0.00, col = c('pink'), 
 ```{r}
 ekm.sexo = svykm(Surv(as.numeric(tempo,censura))~VB01001,design=desenhobr)
 
-plot(ekm.sexo,ylab = "S(t) estimada",xlab = "Tempo (anos)",pars=list(lty=c(1,2),col=c("black","red")))
+plot(ekm.sexo,xlab = "Tempo (anos)",ylab = "S(t) estimada",pars=list(lty=c(1,2),col=c("black","red")))
 
 Legenda<-c("Masculino","Feminino")
 
@@ -167,20 +196,32 @@ legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c(1,2),bty="n", l
 #Variavel explicativa cor. 
 
 ```{r}
+#Agrupar preta com parda ??? como ? 
 
 ekm.cor = svykm(Surv(as.numeric(tempo,censura))~VB01002,design=desenhobr)
 
 plot(ekm.cor,ylab = "S(t) estimada",xlab = "Tempo (idade)"
-     ,pars=list(lty=c(1,2,1,2,1,2),col=c("black","black","red","red","blue","green")))
+     ,pars=list(lty=c(1,2,1,2,1,1),col=c("black","black","red","red","blue", "transparent")))
+Legenda<-c("Branca", "Preta", "Amarela ", "Parda ", "Indigena ", "Não informada")
+legend("bottomleft", Legenda,lwd=c(1,1),cex=1,inset=0.00,col=c("black","black","red","red","blue","transparent"),bty="n", lty = c(1,2,1,2,1,1))
 
-Legenda<-c("Branca - 2015", "Preta - 2015", "Amarela - 2015", "Parda - 2015", "Indigena - 2015","Não informado")
-legend("bottomleft", Legenda,lwd=c(1,1),cex=1,inset=0.00,col=c("black","black","red","red","blue","green"),bty="n", lty = c(1,2,1,2,1,2))
 
 ```
 
 # Idade 
 ```{r}
-#Agrupar? 
+# A mediana das idades são 14 anos
+#Categorizado  de acordo com a mediana
+
+ekm.cat_idade_2015= svykm(Surv(as.numeric(tempo,censura))~cat_idade_2015,design=desenhobr) 
+
+plot(ekm.cat_idade_2015,ylab = "S(t) estimada",xlab = "Tempo (idade)"
+     ,pars=list(lty=c(1,1),col=c("black","red")))
+
+Legenda<-c( ">= Mediana - 2015","< Mediana - 2015")
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c(1,2),bty="n", lty = c(1,1))
+
+
 
 ```
 
@@ -198,7 +239,13 @@ legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c(1,2,1),bty="n",
 
 #  Escolaridade da mãe.
 ```{r}
-#Agrupar ???
+ekm.ensino_mae = svykm(Surv(as.numeric(tempo,censura))~VB01008A,design=desenhobr)
+
+plot(ekm.ensino_mae,ylab = "S(t) estimada",xlab = "Tempo (idade)"
+     ,pars=list(lty=c(1,1,1,1,1,1,1,1,1),col=rainbow(9)))
+
+Legenda<-c("Nao estudou","Comecou fundamental, mas nao terminou","Terminou fundamental","Comecou ensino medio, mas nao terminou","Terminou o ensino medio","Comecou faculdade, mas nao terminou","Terminou faculdade","Nao sei","Não informado")
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=rainbow(8),bty="n", lty = c(1,1,1,1,1,1,1,1,1))
 
 ``` 
 
