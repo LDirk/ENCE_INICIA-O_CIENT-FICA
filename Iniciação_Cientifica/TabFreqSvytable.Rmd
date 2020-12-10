@@ -168,12 +168,12 @@ tabela
 adm = c("Publica", "Privada")
 
 valores = c(2250463.2, 380371.5)
-'
+
 porce = 100/sum(valores)
 
 porcentagem =c(2250463.2*porce, 380371.5*porce)
 
-tabela = data.frame( Administração = adm , Valores = valores, Porcentagem = porcentagem)
+tabela = data.frame( Administracão = adm , Valores = valores, Porcentagem = porcentagem)
 
 tabela
 
@@ -201,10 +201,262 @@ tabela
 ```
 
 
+# Orientação sobre orientação sobre prevenção de gravidez 
+
+
+```{r}
+# Comando utilizado svytable(~factor(VB08008),desenho)
+
+# Pergunta: Na escola, você já recebeu orientação sobre prevenção de gravidez? 
+
+resposta = c("Sim", "Não","Não sei", "Não informado")
+
+valores = c(2073051.09, 389236.14, 154899.22, 13648.29)
+
+porce = 100/sum(valores)
+
+porcentagem = c(2073051.09*porce, 389236.14*porce, 154899.22*porce, 13648.29*porce)
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+
+# Orientação sobre doenças sexualmente transmitiveis
 
 
 
+```{r}
+# Comando utilizado svytable(~factor(VB08009),desenho)
+
+# Pergunta: Na escola, você já recebeu orientação sobre AIDS ou outras Doenças Sexualmente Transmissíveis (DST)? 
+
+resposta = c("Sim", "Não","Não sei", "Não informado")
+
+valores = c(2285149.48, 236003.01, 96359.21, 13323.04)
+
+porce = 100/sum(valores)
+
+porcentagem = c(2285149.48*porce, 236003.01*porce, 96359.21*porce, 13323.04*porce)
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+
+# Orientação sobre como conseguir preservativo gratuitamente
+
+
+```{r}
+# Comando utilizado svytable(~factor(VB08010),desenho)
+
+# Pergunta: Na escola, você já recebeu orientação sobre como conseguir camisinha (preservativo) gratuitamente? 
+
+resposta = c("Sim", "Não","Não sei", "Não informado")
+
+valores = c(1790866.64, 649889.80, 176001.66, 14076.65 )
+
+porce = 100/sum(valores)
+
+porcentagem = c(1790866.64*porce, 649889.80*porce, 176001.66*porce, 14076.65*porce)
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+# NOS ÚLTIMOS 30 DIAS, com que frequência seus pais ou responsáveis sabiam realmente o que você estava fazendo em seu tempo livre? 
+
+```{r}
+# Comando utilizado svytable(~factor(VB07002),desenho)
+
+resposta = c ("Nunca", "Raramente", "As vezes", "Na maior parte do tempo", "Sempre", "Não informado")
+
+valores = c(284941.18, 227858.79, 373005.64, 657777.56, 1072141.39, 15110.18 )
+
+porce = 100/sum(valores) 
+
+porcentagem = c(284941.18*porce, 227858.79*porce, 373005.64*porce, 657777.56*porce, 1072141.39*porce, 15110.18*porce)
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
 
 
 
+``` 
 
+# Morar com o Pai 
+```{r}
+# Comando utilizado svytable(~factor(VB01007),desenho) 
+resposta = c("Sim","Não","Não informado")
+
+valores = c(1673942.747, 953510.536, 3381.454)
+
+porce = 100/sum(valores) 
+
+porcentagem = c(1673942.747*porce, 953510.536*porce, 3381.454*porce)
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
+
+#Morar com a mãe
+```{r}
+# Comando utilizado svytable(~factor(VB01006),desenho) 
+resposta = c("Sim","Não","Não informado")
+
+valores = c(2364438.753,264470.657, 1925.328 )
+
+porce = 100/sum(valores) 
+
+porcentagem = c(2364438.753*porce , 264470.657*porce, 1925.328*porce)
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+#Você tem algum trabalho, emprego ou negócio atualmente? 
+
+```{r}
+# Comando utilizado svytable(~factor(VB01011),desenho) 
+
+resposta = c("Sim","Não","Não informado")
+
+valores = c(352299.583, 2275010.573,3524.582 )
+
+porce = 100/sum(valores) 
+
+porcentagem = c(352299.583*porce, 2275010.573*porce,3524.582*porce ) 
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+# Alguma vez na vida, você já fumou cigarro, mesmo uma ou duas tragadas? 
+
+```{r}
+# Comando utilizado svytable(~factor(VB04001),desenho) 
+
+resposta = c("Sim","Não","Não informado")
+
+valores = c( 483011.208 ,2143008.239, 4815.291)
+
+porce = 100/sum(valores) 
+
+porcentagem = c( 483011.208*porce, 2143008.239*porce,    4815.291*porce) 
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+
+# Você já sofreu bullying?
+
+```{r}
+# Comando utilizado svytable(~factor(VB07010),desenho) 
+
+resposta = c("Sim","Não","Não sei o que é bullying","Não informado")
+
+valores = c( 1246370.81, 1330776.91,   42928.43,   10758.58 )
+
+porce = 100/sum(valores) 
+
+porcentagem = c(1246370.81*porce, 1330776.91*porce  , 42928.43*porce,   10758.58*porce ) 
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+#Alguma vez na vida você foi forçado a ter relação sexual? 
+
+
+```{r}
+# Comando utilizado svytable(~factor(VB09016),desenho) 
+
+resposta = c("Sim","Não","Não informado")
+
+valores = c(105326.34, 2505130.93, 20377.471)
+
+porce = 100/sum(valores) 
+
+porcentagem = c( 105326.34*porce, 2505130.93*porce   ,20377.47*porce ) 
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+
+
+#NOS ÚLTIMOS 12 MESES com que frequência tem se sentido sozinho(a)? 
+
+```{r}
+# Comando utilizado svytable(~factor(VB12001),desenho) 
+
+resposta = c("Nunca","Raramente","As vezes", " Na maioria das vezes","Sempre","Não informado")
+
+valores = c(903577.5, 565239.1, 721162.4, 263367.5, 165870.6,  11617.6 )
+
+porce = 100/sum(valores) 
+
+porcentagem = c(903577.5 *porce, 565239.1*porce ,721162.4*porce ,263367.5*porce, 165870.6*porce  ,11617.6*porce ) 
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+
+#  Quantos amigos(as) próximos você tem?
+```{r}
+# Comando utilizado svytable(~factor(VB12003),desenho) 
+
+resposta = c("Nenhum","1 amigo","2 amigos", " 3 ou mais amigos","Não informado")
+
+valores = c(112441.73,  163234.21,  330131.05, 2012547.47,   12480.27  )
+
+porce = 100/sum(valores) 
+
+porcentagem = c(112441.73*porce , 163234.21*porce,  330131.05*porce, 2012547.47*porce,12480.27*porce) 
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+``` 
+
+#Como você classificaria seu estado de saúde? 
+```{r}
+# Comando utilizado svytable(~factor(VB13005),desenho) 
+
+resposta = c("Muito bom","Bom","Regular", "Ruim","Muito ruim","Não informado")
+
+valores = c(1007970.87,  898567.34,  518766.28,  101117.46,   84746.58,   19666.21)
+
+porce = 100/sum(valores) 
+
+porcentagem = c(1007970.87*porce  ,898567.34*porce  ,518766.28*porce  ,101117.46*porce ,84746.58*porce, 19666.21*porce) 
+
+tabela = data.frame(Resposta = resposta, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+```
