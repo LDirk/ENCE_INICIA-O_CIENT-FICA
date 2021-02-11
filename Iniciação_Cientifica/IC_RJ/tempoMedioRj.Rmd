@@ -1,0 +1,465 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+################################
+# Carregando pacotes necessários.
+################################
+library(srvyr)
+library("dplyr")
+library("readxl")
+library(survival)
+library(survey)
+library(flexsurv)
+library(devtools)
+
+
+
+##############################
+# Lendo os dados da pensi 2015.
+##############################
+
+BaseBR2015 = read.csv2(file = 'PENSE.csv',header=T, sep=";")
+attach(BaseBR2015)
+
+
+
+#####################################################################################################
+# Criando a variavel tempo e censura
+# 0 censura a direita, 1 falha
+# A variavel tempo se refere ao tempo até a primeira relação sexual (c = 1) ou a idade que o individuo
+# tinha na pesquisa, mas que ainda não tinha tido relação sexual (c = 0)
+#####################################################################################################
+
+i = 1 
+tempo = c()
+censura = c()
+while (i <= length(BaseBR2015$VB08002)){
+  
+  if (BaseBR2015$VB08002[i] == -1){
+    
+    tempo = append(tempo,BaseBR2015$VB01003[i])
+    censura = append(censura, 0)
+    i = i + 1
+  }  
+  
+  
+  else if (BaseBR2015$VB08002[i]>=9 && BaseBR2015$VB08002[i]<=18){
+    
+    tempo = append(tempo,BaseBR2015$VB08002[i])
+    censura = append(censura, 1)
+    i = i + 1
+  }
+    
+  
+  else if (BaseBR2015$VB08002[i] == 99 || BaseBR2015$VB08001[i] == 99){
+    tempo = append(tempo, NA)
+    censura = append(censura, NA) # o ERRO ESTÃ NO NA COMO STRING
+    i = i + 1
+    
+  }
+}
+
+  
+###################################################################################
+# Adicionando a variavel tempo até a primeira relação sexual e censura no data frame
+###################################################################################
+BaseBR2015 <- transform(BaseBR2015, tempo=tempo, censura=censura)
+names(BaseBR2015)
+###############################
+#Aplicando o desenho da amostra. 
+###############################
+desenho = svydesign(id =~ escola,
+                    
+  strata =~ ESTRATOGEOREG,
+  weights =~ as.numeric(PESO),
+  data = BaseBR2015,
+  nest = T)
+
+desenhobr = subset(desenho, PAIS == 76) 
+
+desenho_RJ = subset(desenho, UFCENSO == 33 & TIPO_MUNIC == 1) 
+
+```
+
+```{r}
+#Função do tempo médio 
+tempm = function(var){
+        aprox = c()
+        for (j in 1:length(var$time)-1) {
+                stj = var$surv[j]
+                tj1 = var$time[j+1]
+                tj=   var$time[j]     
+                aprox[j] = stj*(tj1-tj) 
+        }
+        med = var$time[1] + sum(aprox)  
+        med
+}
+```
+
+### Região
+```{r}
+#Kaplan Meier
+ekm = svykm(Surv(tempo,censura)~1,design = desenho_RJ )
+
+```
+
+### Sexo
+```{r}
+ekm.sexo = svykm(Surv(tempo,censura)~VB01001,design=desenho_RJ)
+print("sexo masculino,tempo médio até a iniciação sexual")
+tempm(ekm.sexo$'1') #Masculino, tempo médio da iniciação sexual
+print('-----------')
+print("sexo feminino,tempo médio até a iniciação sexual")
+tempm(ekm.sexo$'2') #Feminino 
+```
+
+### Cor
+```{r}
+ekm.cor = svykm(Surv(tempo,censura)~VB01002,design=desenho_RJ)
+print("Cor branca,tempo médio até a iniciação sexual")
+tempm(ekm.cor$'1') 
+print('-----------')
+print("Cor Preta,tempo médio até a iniciação sexual")
+tempm(ekm.cor$'2') 
+print('-----------')
+print("Cor Amarela,tempo médio até a iniciação sexual") 
+tempm(ekm.cor$'3')
+print('-----------')
+print("Cor parda,tempo médio até a iniciação sexual")
+tempm(ekm.cor$'4') 
+print('-----------')
+print("Cor Indigena,tempo médio até a iniciação sexual") 
+tempm(ekm.cor$'5') 
+print('-----------')
+print("Cor não informada,tempo médio até a iniciação sexual")
+tempm(ekm.cor$'99') 
+```
+
+####  Idade, isso faz algum sentido separar as idades em grupos?  
+```{r}
+ekm.idade= svykm(Surv(tempo,censura)~VB01003,design=desenho_RJ)
+#Interpretação: desses alunos que ja tiveram relação sexual, o tempo médio até a iniciação foi: 
+print("Alunos com 11 anos ou menos,tempo médio até a iniciação sexual")
+tempm(ekm.idade$'11')
+print('-----------')
+print(" Alunos com 12 anos, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'12')
+print('-----------')
+print(" Alunos com 13 anos, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'13')
+print('-----------')
+print(" Alunos com 14 anos, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'14')
+print('-----------')
+print(" Alunos com 15 anos, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'15')
+print('-----------')
+print(" Alunos com 16 anos, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'16')
+print('-----------')
+print(" Alunos com 17 anos, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'17')
+print('-----------')
+print(" Alunos com 18 anos, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'18')
+print('-----------')
+print(" Alunos com 19 anos ou mais, tempo médio até a iniciação sexual")
+tempm(ekm.idade$'19')
+```
+
+### Uso de drogas
+```{r}
+ekm.drogas = svykm(Surv(tempo,censura)~VB06001,design=desenho_RJ)
+print("Sim,tempo médio até a iniciação sexual")
+tempm(ekm.drogas$'1')
+print('-----------')
+print("Não,tempo médio até a iniciação sexual")
+tempm(ekm.drogas$'2')
+print('-----------')
+print("Não informado,tempo médio até a iniciação sexual")
+tempm(ekm.drogas$'99')
+```
+
+### Escolaridade da mãe.
+
+```{r}
+ekm.ensino_mae = svykm(Surv(tempo,censura)~VB01008A,design=desenho_RJ)
+print("Minha mãe não estudo, tempo médio até a iniciação sexual:")
+tempm(ekm.ensino_mae$'1')
+print('-----------')
+print("Minha mãe começou o ensino fundamental ou 1º grau, mas não terminou, tempo médio até a iniciação sexual: ") 
+tempm(ekm.ensino_mae$'2')
+print('-----------')
+print("Minha mãe terminou o ensino fundamental ou 1º grau,tempo médio até a iniciação:") 
+tempm(ekm.ensino_mae$'3')
+print('-----------')
+print("Minha mãe começou o ensino médio ou 2º grau, mas não terminou,tempo médio até a iniciação:") 
+tempm(ekm.ensino_mae$'4')
+print('-----------')
+print("Minha mãe terminou o ensino médio ou 2° grau,tempo médio até a iniciação:") 
+tempm(ekm.ensino_mae$'5')
+print('-----------')
+print("Minha mãe começou a faculdade (ensino superior), mas não terminou,tempo médio até a iniciação:") 
+tempm(ekm.ensino_mae$'6')
+print('-----------')
+print("Minha mãe terminou a faculdade (ensino superior),tempo médio até a iniciação:") 
+tempm(ekm.ensino_mae$'7')
+print('-----------')
+print("Não sei,tempo médio até a iniciação:") 
+tempm(ekm.ensino_mae$'8') 
+print('-----------')
+print("Não informado,tempo médio até a iniciação:") 
+tempm(ekm.ensino_mae$'99') 
+```
+
+### Dependencia administrativa da escola.
+
+```{r}
+ekm.depAdm = svykm(Surv(tempo,censura)~V0007,design=desenho_RJ)
+print("Pública, tempo médio até a iniciação sexual: ")
+tempm(ekm.depAdm$"1")
+print('-----------') 
+print("Particular, tempo médio até a iniciação sexual: ")
+tempm(ekm.depAdm$"2")
+```
+### Consumo de bebida alcoolica. 
+
+```{r}
+ekm.bebidaAlcoolica = svykm(Surv(tempo,censura)~VB05002,design=desenho_RJ)
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.bebidaAlcoolica$"1")
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.bebidaAlcoolica$"2")
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.bebidaAlcoolica$"99")
+```
+
+### Orientação sobre prevenção de gravidez.
+```{r}
+ekm.OrientacaoGravidez = svykm(Surv(tempo,censura)~VB08008,design=desenho_RJ)
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoGravidez$"1")
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoGravidez$"2")
+print('-----------') 
+print("Não sei, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoGravidez$"3")
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoGravidez$"99")
+```
+
+### Orientação sobre doenças sexualmente transmissiveis. 
+```{r}
+ekm.OrientacaoDoencas = svykm(Surv(tempo,censura)~VB08009,design=desenho_RJ)
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoDoencas$"1")
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoDoencas$"2")
+print('-----------') 
+print("Não sei, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoDoencas$"3")
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoDoencas$"99")
+```
+
+### Orientação sobre como conseguir preservativos gratuitamente  
+```{r}
+ekm.OrientacaoPreservativo = svykm(Surv(tempo,censura)~VB08010,design=desenho_RJ)
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoPreservativo$"1")
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoPreservativo$"2")
+print('-----------') 
+print("Não sei, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoPreservativo$"3")
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.OrientacaoPreservativo$"99")
+```
+
+### #NOS ÚLTIMOS 30 DIAS, com que frequência seus pais ou responsáveis sabiam realmente o que você estava fazendo em #seu tempo livre?  
+
+```{r}
+ekm.PaisTempoLivre = svykm(Surv(tempo,censura)~VB07002,design=desenho_RJ)
+print("Nunca, tempo médio até a iniciação sexual: ")
+tempm(ekm.PaisTempoLivre$"1")
+print('-----------') 
+print("Raramente, tempo médio até a iniciação sexual: ")
+tempm(ekm.PaisTempoLivre$"2")
+print('-----------') 
+print("As vezes, tempo médio até a iniciação sexual: ") 
+tempm(ekm.PaisTempoLivre$"3")
+print('-----------') 
+print("Na maior parte do tempo, tempo médio até a iniciação sexual: ")
+tempm(ekm.PaisTempoLivre$"4")
+print('-----------') 
+print("Sempre, tempo médio até a iniciação sexual: ") 
+tempm(ekm.PaisTempoLivre$"5")
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.PaisTempoLivre$"99")
+``` 
+
+### Morar com o pai
+```{r}
+ekm.pai = svykm(Surv(tempo,censura)~VB01007,design=desenho_RJ) 
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.pai$'1')
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.pai$'2')
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.pai$'99')
+```
+
+### Morar com a mãe
+```{r}
+ekm.mae = svykm(Surv(tempo,censura)~VB01006,design=desenho_RJ) 
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.mae$'1')
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.mae$'2')
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.mae$'99')
+```
+
+### Voce possui algum trabalho, emprego ou negocio ? 
+
+```{r}
+ekm.trabalho = svykm(Surv(tempo,censura)~VB01011,design=desenho_RJ) 
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.trabalho$'1')
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.trabalho$'2')
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.trabalho$'99')
+```
+
+###  Alguma vez na vida, você já fumou cigarro, mesmo uma ou duas tragadas? 
+
+```{r}
+ekm.cigarro = svykm(Surv(tempo,censura)~VB04001,design=desenho_RJ) 
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.cigarro$'1')
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.cigarro$'2')
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.cigarro$'99')
+```
+
+### Você já sofreu bullying?
+
+```{r}
+ekm.bullying = svykm(Surv(tempo,censura)~VB07010,design=desenho_RJ) 
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.bullying$'1')
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.bullying$'2')
+print('-----------') 
+print("Não sei o que é bullying, tempo médio até a iniciação sexual: ")
+tempm(ekm.bullying$'3')
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.bullying$'99')
+```
+
+### Alguma vez na vida você foi forçado a ter relação sexual? 
+
+```{r}
+ekm.relacaoForcada = svykm(Surv(tempo,censura)~VB09016,design=desenho_RJ) 
+print("Sim, tempo médio até a iniciação sexual: ")
+tempm(ekm.relacaoForcada$'1')
+print('-----------') 
+print("Não, tempo médio até a iniciação sexual: ")
+tempm(ekm.relacaoForcada$'2')
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.relacaoForcada$'99')
+```
+
+### #NOS ÚLTIMOS 12 MESES com que frequência tem se sentido sozinho(a)? 
+
+```{r}
+ekm.sozinho = svykm(Surv(tempo,censura)~VB12001,design=desenho_RJ) 
+print("Nunca, tempo médio até a iniciação sexual: ")
+tempm(ekm.sozinho$"1")
+print('-----------') 
+print("Raramente, tempo médio até a iniciação sexual: ")
+tempm(ekm.sozinho$"2")
+print('-----------') 
+print("As vezes, tempo médio até a iniciação sexual: ") 
+tempm(ekm.sozinho$"3")
+print('-----------') 
+print("Na maior parte do tempo, tempo médio até a iniciação sexual: ")
+tempm(ekm.sozinho$"4")
+print('-----------') 
+print("Sempre, tempo médio até a iniciação sexual: ") 
+tempm(ekm.sozinho$"5")
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual: ")
+tempm(ekm.sozinho$"99")
+``` 
+
+
+### Quantos amigos(as) próximos você tem? 
+
+```{r}
+ekm.amigos = svykm(Surv(tempo,censura)~VB12003,design=desenho_RJ) 
+print("0, tempo médio até a iniciação sexual:") 
+tempm(ekm.amigos$"1")
+print('-----------') 
+print("1, tempo médio até a iniciação sexual:")
+tempm(ekm.amigos$"2")
+print('-----------') 
+print("2, tempo médio até a iniciação sexual:")
+tempm(ekm.amigos$"3")
+print('-----------') 
+print("3 ou mais, tempo médio até a iniciação sexual:")
+tempm(ekm.amigos$"4")
+print('-----------') 
+print("Não informado, tempo médio até a iniciação sexual:")
+tempm(ekm.amigos$"99")
+print('-----------') 
+``` 
+
+### Como você classificaria seu estado de saúde? 
+```{r}
+ekm.saude = svykm(Surv(tempo,censura)~VB13005,design=desenho_RJ) 
+print("Muito bom")
+tempm(ekm.saude$'1')
+print('-----------') 
+print("bom")
+tempm(ekm.saude$'2')
+print('-----------') 
+print("Regular ")
+tempm(ekm.saude$'3')
+print('-----------') 
+print("Ruim")
+tempm(ekm.saude$'4')
+print('-----------') 
+print("Muito Ruim") 
+tempm(ekm.saude$'5')
+print('-----------') 
+print("Não informado")
+tempm(ekm.saude$'99')
+``` 
