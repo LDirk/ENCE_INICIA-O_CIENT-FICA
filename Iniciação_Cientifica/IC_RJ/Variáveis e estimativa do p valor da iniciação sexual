@@ -1,0 +1,74 @@
+\begin{table}
+    \centering
+    \begin{small}
+    \caption{Variáveis e estimativa do p valor da iniciação sexual} \label{Tabela1}
+    \begin{tabular}{ccc}
+    \hline
+            Variáveis      &         P valor \\
+            \hline
+            \textbf{Sexo}  &  4.058512e-10 \\
+            \\
+            
+            \textbf{Cor}   &   0.4808659   \\ 
+            \\
+            
+            \textbf{Idade} &   2.010984e-07 \\
+            \\
+            
+            \textbf{Uso de drogas} &  0.6473155 \\ 
+            \\
+            
+            \textbf{Escolaridade da mãe} & 0.3919608\\ 
+            \\
+            
+            \textbf{Dependência Administrativa da escola} \\
+            \textbf{da escola} & 5.410414e-05  \\ 
+            \\
+            
+            \textbf{Consumo de bebida alcoólica } & 6.177057e-21 \\
+            \\
+            
+            \textbf{Orientação sobre prevenção} \\
+            \textbf{de gravidez} & 0.5170652
+            \\
+            
+            \textbf{Orientação sobre doenças } \\
+            \textbf{sexualmente transmissiveis} & 0.1179851\\
+            \\
+            
+            
+            \textbf{Orientação sobre como conseguir}\\
+            \textbf{preservativos gratuitamente} & 0.6346354\\
+            \\
+         
+            \textbf{Nos últimos 30 DIAS,com que} \\
+            \textbf{ frequência seus pais ou responsáveis}\\
+            \textbf{sabiam realmente o que você estava }  &  0.01900021 \\
+            \textbf{fazendo em seu tempo livre?} \\
+            \\
+            
+            \textbf{Se mora com o pai}  &    0.01900021\\
+            \\
+            
+            \textbf{Se mora com a mãe}  &   0.5049016  \\
+            \\
+            
+            \textbf{Voce possui algum trabalho,} \\
+            \textbf{emprego ou negócio?}  & 1.849661e-06 \\ 
+            \\
+            
+            \textbf{}               &              \\
+            \textbf{}               &              \\
+            \textbf{}               &              \\
+            \textbf{}               &              \\
+            \textbf{}               &              \\
+            \textbf{}               &              \\
+            \textbf{}               &              \\
+            \textbf{}               &              \\
+            
+            
+
+\hline
+\end{tabular}
+\end{small}
+\end{table}
