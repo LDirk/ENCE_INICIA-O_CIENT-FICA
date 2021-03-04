@@ -1,0 +1,201 @@
+\begin{table}
+    \centering
+    \begin{small}
+    \caption{Frequência e estimativa do tempo médio da iniciação sexual} \label{Tabela1}
+    \begin{tabular}{ccc}
+    \hline
+            Variáveis     &     n(\%)     &      Tempo\\
+            \hline
+            \\
+            \textbf{Sexo}    \\
+            Masculino        &  33389 (47) &     16.07         \\ 
+            Feminino         &  37653 (53) &     17.06          \\
+            \\
+            \textbf{Cor}     \\ 
+            Branca          &  30507 (42.95)          & 16.82                    \\               
+            Preta           &  11004 (15.48)          & 15.36                     \\ 
+            Amarela         &  3342 (4.7)             & 16.06                       \\ 
+            Parda           &  24053 (33.85)          & 16.87                      \\ 
+            Indígena        &  2101 (2.95)            & 15.15                      \\ 
+            Não Informado   &  35  (0.04)             & 14                          \\ 
+            \\
+            \textbf{Idade} \\
+            11 ou menos     &   29(0.04)               &   11                       \\               
+            12 anos         &   137(0.19)              &   12                       \\ 
+            13 anos         &   5794(8.15)             &   12.91                    \\ 
+            14 anos         &   40038(56.35)           &   13.77                    \\ 
+            15 anos         &   19618(27.61)           &   14.38                    \\ 
+            16 anos         &   4404(6.19)             &   14.67                    \\            
+            17 anos         &   661(0.93)              &   14.75                    \\      
+            18 anos         &   135(0.19)              &   16.66                    \\      
+            19 anos ou mais &   226(0.31)              &   16.54                    \\ 
+            \\
+            \textbf{Já usou drogas?}\\ 
+             Sim                &    6257  (8.80)           &   13.85                      \\        
+             Não                &    64757 (91.15)          &   16.83                       \\       
+             Não informado      &    29    (0.04)          &     14                     \\               
+            \\ 
+            \textbf{Escolaridade da mãe}    \\      
+            Não estudou &   1325(1.86)                & 14.21 \\
+            Começou o ensino fundamental, mas não terminou & 8322 (11.71) & 15.50 \\
+            Terminou o ensino fundamental & 3359 (5.01) & 15.24 \\
+            Começou o ensino médio, mas não terminou & 5708 (8.03) &  14.84 \\ 
+            Terminou o ensino médio & 17699 (24.91) & 16.39 \\ 
+            Começou a faculdade, mas não terminou & 4678 (6.58) & 15.87 \\
+            Terminou a faculdade & 13864(19.51) & 15.72 \\
+            Não sei & 15720(22.12) & 17.06 \\ 
+            Não informado & 166 (0.23) & 14.66\\ 
+            \\
+            \textbf{Dependência Administrativa da escola}    \\       
+            Pública & 43942(61.85) & 16.282 \\
+            Privada & 27101(38.14) & 17.19   \\ 
+            \\ 
+
+\hline
+\end{tabular}
+\end{small}
+\end{table}
+
+\clearpage
+\pagebreak
+
+\begin{table}
+    \centering
+    \begin{small}
+    \caption{Frequência e estimativa do tempo médio da iniciação sexual} \label{Tabela1}
+    \begin{tabular}{ccc}
+    \hline
+            Variáveis     &     n(\%)     &      Tempo\\
+            \hline
+            \\
+            \textbf{Já consumiu álcool alguma vez na vida?}\\
+            Sim &    39029(54.93)   &  15.60         \\
+            Não &    32013(45.06)   &  17.67         \\
+            \\
+            \textbf{Já recebeu orientação sobre prevenção} \\
+            \textbf {de gravidez na escola?} \\
+            Sim &   51898(73.05) & 16.85 \\
+            Não &   14833.47(20.87) & 15.76 \\
+            Não sei &  4256(5.99) & 15.28 \\
+            Não informado & 54.43(0.07) & 13.68 \\ 
+            \\
+            \textbf{Já recebeu orientação sobre prevenção} \\
+            \textbf {de doenças sexualmente transmissíveis na escola?} \\
+            Sim           & 59518(83.78) &  16.69 \\
+            Não           & 8975(12.63)  &  16.18 \\
+            Não sei       & 2487(3.50)   &  15.22  \\
+            Não informado & 62(0.08)     &  10.15  \\ 
+            \\ 
+            \textbf{Na escola, você já recebeu orientação sobre como} \\
+             \textbf{conseguir preservativo gratuitamente?} \\
+             Sim            & 44147(62.14) & 16.59 \\
+             Não            & 21527(30.30) & 16.55 \\
+             Não sei        & 5333(7.51)   & 15.51 \\
+             Não informado  &  36(0.05)    & 11    \\ 
+             \\ 
+             \textbf{Nos últimos 30 dias, com que frequência seus pais}\\
+             \textbf{ou responsáveis sabiam realmente o que você estava}\\ 
+             \textbf{fazendo em seu tempo livre?} \\
+             Nunca                      & 5849.(8.23)   & 16.16 \\
+             Raramente                  & 6126(8.62)    & 15.18 \\
+             As vezes                   & 10631(14.96)  & 15.33 \\
+             Na maior parte do tempo    & 19805(27.88)  & 15.78 \\
+             Sempre                     & 2860(40.26)   & 17.27 \\
+             Não informado              & 28(0.04)      & 14\\ 
+             \\
+             \textbf{Você mora com seu pai?}\\
+             Sim    & 42718(60.13)  & 16.73659 \\
+             Não    & 28324(39.87)  & 16.29108  \\ 
+             \\
+\hline
+\end{tabular}
+\end{small}
+\end{table}
+
+
+\clearpage
+\pagebreak
+
+
+
+\begin{table}
+    \centering
+    \begin{small}
+    \caption{Frequência e estimativa do tempo médio da iniciação sexual} \label{Tabela1}
+    \begin{tabular}{ccc}
+    \hline
+            Variáveis     &     n(\%)     &      Tempo\\
+            \hline
+            \\
+             \textbf{Você mora com sua mãe?}\\
+             Sim    & 64640(91.07) & 16.73\\
+             Não    & 6335(8.93)  & 15.83  \\ 
+             \\
+             \textbf{Você possui algum trabalho, emprego ou negócio}\\
+             Sim  & 6969(9.81) & 15.07 \\
+             Não  & 64073(90.19) & 16.97 \\ 
+             \\ 
+             \textbf{Alguma vez na vida, você já fumou cigarro,}\\
+             \textbf{mesmo uma ou duas tragadas?}\\ 
+             Sim & 11661(16.41) & 14.28  \\
+             Não & 59382(83.59) &  16.94 \\
+             \\ 
+             \textbf{Você já sofreu bullying?} \\ 
+             Sim & 30198(42.51) & 16.39 \\
+             Não & 40026(56.34) & 16.45 \\
+             Não sei o que é bullying &  786(1.11) & 14.38 \\
+             Não informado  &  33(0.0463079) & 14 \\ 
+             \\ 
+             \textbf{Alguma vez na vida você foi } \\
+             \textbf{forçado a ter relação sexual?} \\
+             Sim           &  2149(3.03) & 14.12   \\ 
+             Não           &  68759(96.78) & 16.68 \\
+             Não informado &  134(0.19) & 12.32 \\
+             \\
+             \textbf{Nos últimos 12 meses com que frequência} \\
+             \textbf{você tem se sentido sozinho(a)?}\\ 
+             Nunca                  & 23263(32.75) & 16.38  \\
+             Raramente ¨            & 17101(24.07) &  15.81 \\
+             As vezes               & 18799(26.46) &  16.68 \\
+             Na maioria das vezes   & 6798(9.57)   &  15.09 \\
+             Sempre                 & 5081(7.15)   & 16.41 \\
+             \\
+            \textbf{Quantos amigos(as) próximos você tem?}\\ 
+            Nenhum              &  2210(3.11)   & 15.95 \\
+            1 amigo             &  3385(4.77)   & 15.36 \\
+            2 amigos            & 8515(11.99)   & 16.05  \\ 
+            3 ou mais amigos    & 56856(80.03)  & 16.58  \\
+            Não informado       & 76(0.10)      & 11.45  \\ 
+            \\
+               
+            
+\hline
+\end{tabular}
+\end{small}
+\end{table}
+
+\clearpage
+\pagebreak
+
+\begin{table}
+    \centering
+    \begin{small}
+    \caption{Frequência e estimativa do tempo médio da iniciação sexual} \label{Tabela1}
+    \begin{tabular}{ccc}
+    \hline
+            Variáveis     &     n(\%)     &      Tempo\\
+            \hline
+            \\
+            \textbf{Como você classificaria seu estado de saúde?}\\
+            Muito bom &      23643(33.28)    & 16.79 \\
+            Bom &            27505(38.71)    & 16.34 \\
+            Regular &        13196(18.57)    & 15.88 \\
+            Ruim &           3722(5.24)      & 15.30\\
+            Muito ruim &     2763(3.90)      & 15.11\\
+            Não informado &  212(0.30)       & 12.42  \\         
+            \\
+        
+\hline
+\end{tabular}
+\end{small}
+\end{table}
