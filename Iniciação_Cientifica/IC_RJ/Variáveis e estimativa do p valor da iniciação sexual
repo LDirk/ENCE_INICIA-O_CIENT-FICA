@@ -57,18 +57,48 @@
             \textbf{emprego ou negócio?}  & 1.849661e-06 \\ 
             \\
             
-            \textbf{}               &              \\
-            \textbf{}               &              \\
-            \textbf{}               &              \\
-            \textbf{}               &              \\
-            \textbf{}               &              \\
-            \textbf{}               &              \\
-            \textbf{}               &              \\
-            \textbf{}               &              \\
+            \textbf{Alguma vez na vida, você já fumou } \\
+            \textbf{cigarro, mesmo uma ou duas tragadas?} & 2.499401e-15\\
+            \\
             
+            \textbf{Você já sofreu bullying?} & 0.964387157 \\
+            \\
             
-
+            \textbf{Alguma vez na vida você foi forçado a ter relação sexual?} & 0.1155813 \\
+            \\
+            
+            \textbf{Nos últimos 12 meses com que frequência }\\   
+            \textbf{tem se sentido sozinho(a)?} & 0.2975191   
+            \\
+    
 \hline
 \end{tabular}
 \end{small}
 \end{table}
+
+
+\clearpage
+\pagebreak
+
+
+\begin{table}
+    \centering
+    \begin{small}
+    \caption{Variáveis e estimativa do p valor da iniciação sexual} \label{Tabela1}
+    \begin{tabular}{ccc}
+    \hline
+            Variáveis      &         P valor \\
+            \hline
+            
+            
+            \textbf{Quantos amigos(as) próximos você tem?}  &  0.4712421  \\
+            \\
+            
+            \textbf{Como você classificaria seu estado de saúde?} & 0.09073511 \\
+            \\
+            
+\hline
+\end{tabular}
+\end{small}
+\end{table}
+
