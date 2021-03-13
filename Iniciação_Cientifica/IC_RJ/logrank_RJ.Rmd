@@ -23,7 +23,7 @@ library(devtools)
 ##############################
 # Lendo os dados da pensi 2015.
 ##############################
-BaseBR2015 = read.csv2(file = 'PENSE.csv',header=T, sep=";")
+BaseBR2015 = read.csv2(file = 'pense.csv',header=T, sep=";")
 attach(BaseBR2015)
 #####################################################################################################
 # Criando a variavel tempo e censura
@@ -84,10 +84,10 @@ desenho = svydesign(id =~ escola,
   weights =~ as.numeric(PESO),
   data = BaseBR2015,
   nest = T)
-desenhobr = subset(desenho, PAIS == 76) 
-desenhoRJ = subset(desenho, UFCENSO == 33 & TIPO_MUNIC == 1)
-desenhoEstadoRJ = subset(desenho, UFCENSO == 33)
-desenhoRegiao = subset(desenho, REGEOGR == 3)
+
+
+desenho_RJ = subset(desenho, UFCENSO == 33 & TIPO_MUNIC == 1) 
+
 ```
 
 #######################################
@@ -99,117 +99,112 @@ desenhoRegiao = subset(desenho, REGEOGR == 3)
 # Iniciação sexual
 ```{r}
 # as.numeric estava  gerando o erro 
-ekm = svykm(Surv(tempo,censura)~1,design = desenhobr )
+ekm = svykm(Surv(tempo,censura)~1,design = desenho_RJ )
 ```
 
 
-# Variavel explicativa região
-```{r}
-ekm.regiao = svykm(Surv(tempo,censura)~REGEOGR, design = desenhobr,se=F)
-svylogrank(Surv(tempo,censura)~REGEOGR,design = desenhobr)
-```
 
 # Variavel explicativa sexo. 
 ```{r}
-ekm.sexo = svykm(Surv(tempo,censura)~VB01001,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB01001,design=desenhobr)
+ekm.sexo = svykm(Surv(tempo,censura)~VB01001,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB01001,design=desenho_RJ)
 ```
 
 # Variavel explicativa cor. 
 
 ```{r}
 #Agrupar preta com parda ??? como ? 
-ekm.cor = svykm(Surv(tempo,censura)~VB01002,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB01002,design=desenhobr)
+ekm.cor = svykm(Surv(tempo,censura)~VB01002,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB01002,design=desenho_RJ)
 ```
 
 # Idade 
 ```{r}
 # A mediana das idades são 14 anos
 #Categorizado  de acordo com a mediana
-ekm.idade= svykm(Surv(tempo,censura)~VB01003,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB01003,design=desenhobr)
+ekm.idade= svykm(Surv(tempo,censura)~VB01003,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB01003,design=desenho_RJ)
 ```
 
 #  Variavel explicativa Uso de drogas 
 ```{r}
-ekm.drogas = svykm(Surv(tempo,censura)~VB06001,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB06001,design=desenhobr)
+ekm.drogas = svykm(Surv(tempo,censura)~VB06001,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB06001,design=desenho_RJ)
 ```
 
 #  Escolaridade da mãe.
 ```{r}
-ekm.ensino_mae = svykm(Surv(tempo,censura)~VB01008A,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB01008A,design=desenhobr)
+ekm.ensino_mae = svykm(Surv(tempo,censura)~VB01008A,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB01008A,design=desenho_RJ)
 ``` 
 
 
 #  Dependencia administrativa da escola.
 ```{r}
-ekm.depAdm = svykm(Surv(tempo,censura)~V0007,design=desenhobr)
-svylogrank(Surv(tempo,censura)~V0007,design=desenhobr)
+ekm.depAdm = svykm(Surv(tempo,censura)~V0007,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~V0007,design=desenho_RJ)
 ``` 
 
 
 # Consumo de bebida alcoolica. 
 
 ```{r}
-ekm.bebidaAlcoolica = svykm(Surv(tempo,censura)~VB05002,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB05002,design=desenhobr)
+ekm.bebidaAlcoolica = svykm(Surv(tempo,censura)~VB05002,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB05002,design=desenho_RJ)
 ``` 
 
 
 # Orientação sobre prevenção de gravidez.
 ```{r}
-ekm.OrientacaoGravidez = svykm(Surv(tempo,censura)~VB08008,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB08008,design=desenhobr)
+ekm.OrientacaoGravidez = svykm(Surv(tempo,censura)~VB08008,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB08008,design=desenho_RJ)
 ``` 
 
 # Orientação sobre doenças sexualmente transmissiveis. 
 
 ```{r}
-ekm.OrientacaoDoencas = svykm(Surv(tempo,censura)~VB08009,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB08009,design=desenhobr)
+ekm.OrientacaoDoencas = svykm(Surv(tempo,censura)~VB08009,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB08009,design=desenho_RJ)
 ``` 
 
 
 # Orientação sobre como conseguir preservativos gratuitamente  
 
 ```{r}
-ekm.OrientacaoPreservativo = svykm(Surv(tempo,censura)~VB08010,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB08010,design=desenhobr)
+ekm.OrientacaoPreservativo = svykm(Surv(tempo,censura)~VB08010,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB08010,design=desenho_RJ)
 ``` 
 
 # NOS ÚLTIMOS 30 DIAS, com que frequência seus pais ou responsáveis sabiam realmente o que você estava fazendo em #seu tempo livre? 
 
 ```{r}
-ekm.PaisTempoLivre = svykm(Surv(tempo,censura)~VB07002,design=desenhobr)
-svylogrank(Surv(tempo,censura)~VB07002,design=desenhobr)
+ekm.PaisTempoLivre = svykm(Surv(tempo,censura)~VB07002,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB07002,design=desenho_RJ)
 ``` 
 
 # Morar com o pai 
 ```{r}
-ekm.pai = svykm(Surv(tempo,censura)~VB01007,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB07002,design=desenhobr)
+ekm.pai = svykm(Surv(tempo,censura)~VB01007,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB07002,design=desenho_RJ)
 ``` 
 
 # Morar com a Mãe 
 ```{r}
-ekm.mae = svykm(Surv(tempo,censura)~VB01006,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB01006,design=desenhobr)
+ekm.mae = svykm(Surv(tempo,censura)~VB01006,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB01006,design=desenho_RJ)
 ``` 
 
 # Voce possui algum trabalho, emprego ou negocio ? 
 ```{r}
-ekm.trabalho = svykm(Surv(tempo,censura)~VB01011,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB01011,design=desenhobr)
+ekm.trabalho = svykm(Surv(tempo,censura)~VB01011,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB01011,design=desenho_RJ)
 ``` 
 
 # Alguma vez na vida, você já fumou cigarro, mesmo uma ou duas tragadas? 
 
 ```{r}
-ekm.cigarro = svykm(Surv(tempo,censura)~VB04001,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB04001,design=desenhobr)
+ekm.cigarro = svykm(Surv(tempo,censura)~VB04001,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB04001,design=desenho_RJ)
 ``` 
 
 
@@ -217,8 +212,8 @@ svylogrank(Surv(tempo,censura)~VB04001,design=desenhobr)
 
 ```{r}
 # Comando utilizado svytable(~factor(VB07010),desenho) 
-ekm.bullying = svykm(Surv(tempo,censura)~VB07010,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB07010,design=desenhobr)
+ekm.bullying = svykm(Surv(tempo,censura)~VB07010,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB07010,design=desenho_RJ)
 ``` 
 
 # Alguma vez na vida você foi forçado a ter relação sexual? 
@@ -226,28 +221,28 @@ svylogrank(Surv(tempo,censura)~VB07010,design=desenhobr)
 
 ```{r}
 # Comando utilizado svytable(~factor(VB09016),desenho) 
-ekm.relacaoForcada = svykm(Surv(tempo,censura)~VB09016,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB09016,design=desenhobr)
+ekm.relacaoForcada = svykm(Surv(tempo,censura)~VB09016,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB09016,design=desenho_RJ)
 ``` 
 
 
 # NOS ÚLTIMOS 12 MESES com que frequência tem se sentido sozinho(a)? 
 
 ```{r}
-ekm.sozinho = svykm(Surv(tempo,censura)~VB12001,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB12001,design=desenhobr)
+ekm.sozinho = svykm(Surv(tempo,censura)~VB12001,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB12001,design=desenho_RJ)
 ``` 
 
 # Quantos amigos(as) próximos você tem? 
 
 ```{r}
-ekm.amigos = svykm(Surv(tempo,censura)~VB12003,design=desenhobr) 
-svylogrank(Surv(tempo,censura)~VB12003,design=desenhobr)
+ekm.amigos = svykm(Surv(tempo,censura)~VB12003,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB12003,design=desenho_RJ)
 ``` 
 
 # Como você classificaria seu estado de saúde? 
 ```{r}
 # Comando utilizado svytable(~factor(VB13005),desenho) 
-ekm.saude = svykm(Surv(tempo,censura)~VB13005,design=desenhobr) 
-svylogrank = svykm(Surv(tempo,censura)~VB13005,design=desenhobr)
+ekm.saude = svykm(Surv(tempo,censura)~VB13005,design=desenho_RJ) 
+svylogrank(Surv(tempo,censura)~VB13005,design=desenho_RJ)
 ```
