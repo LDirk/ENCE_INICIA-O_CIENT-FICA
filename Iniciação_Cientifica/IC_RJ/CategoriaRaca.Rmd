@@ -145,3 +145,24 @@ Legenda<-c("Verde", "Preta", "Outras ",  "Não informada")
 legend("bottomleft", Legenda,lwd=c(1,1),cex=1,inset=0.00,col=c("green","black","red", "transparent"),bty="n", lty = c(1,2,1,2))
 
 ```
+
+#lOGRANK, P-VALOr
+```{r}
+ekm.raca = svykm(Surv(tempo,censura)~raca,design=desenhoRJ)
+svylogrank(Surv(tempo,censura)~raca,design=desenhoRJ)
+
+```
+
+# Tempo mediano
+
+```{r}
+ekm.raca = svykm(Surv(tempo,censura)~raca,design=desenhoRJ)
+ekm.raca
+
+# 1 branca, mediana 18 
+# 2 preta, mediana 17 
+# 3 outras, mediana inf ???
+
+
+```
+
