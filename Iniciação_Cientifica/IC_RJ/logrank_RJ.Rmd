@@ -185,7 +185,7 @@ svylogrank(Surv(tempo,censura)~VB07002,design=desenho_RJ)
 # Morar com o pai 
 ```{r}
 ekm.pai = svykm(Surv(tempo,censura)~VB01007,design=desenho_RJ) 
-svylogrank(Surv(tempo,censura)~VB07002,design=desenho_RJ)
+svylogrank(Surv(tempo,censura)~VB01007,design=desenho_RJ)
 ``` 
 
 # Morar com a Mãe 
