@@ -1,0 +1,324 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+#Tempo Mediano
+```{r}
+library(srvyr)
+library("dplyr")
+library("readxl")
+library(survival)
+library(survey)
+library(flexsurv)
+library(devtools)
+
+
+
+##############################
+# Lendo os dados da pensi 2015.
+##############################
+
+BaseBR2015 = read.csv2(file = 'PENSE.csv',header=T, sep=";")
+attach(BaseBR2015)
+
+
+
+#####################################################################################################
+# Criando a variavel tempo e censura
+# 0 censura a direita, 1 falha
+# A variavel tempo se refere ao tempo até a primeira relação sexual (c = 1) ou a idade que o individuo
+# tinha na pesquisa, mas que ainda não tinha tido relação sexual (c = 0)
+#####################################################################################################
+
+i = 1 
+tempo = c()
+censura = c()
+while (i <= length(BaseBR2015$VB08002)){
+  
+  if (BaseBR2015$VB08002[i] == -1){
+    
+    tempo = append(tempo,BaseBR2015$VB01003[i])
+    censura = append(censura, 0)
+    i = i + 1
+  }  
+  
+  
+  else if (BaseBR2015$VB08002[i]>=9 && BaseBR2015$VB08002[i]<=18){
+    
+    tempo = append(tempo,BaseBR2015$VB08002[i])
+    censura = append(censura, 1)
+    i = i + 1
+  }
+    
+  
+  else if (BaseBR2015$VB08002[i] == 99 || BaseBR2015$VB08001[i] == 99){
+    tempo = append(tempo, NA)
+    censura = append(censura, NA) # o ERRO ESTÃ NO NA COMO STRING
+    i = i + 1
+    
+  }
+}
+
+  
+###################################################################################
+# Adicionando a variavel tempo até a primeira relação sexual e censura no data frame
+###################################################################################
+BaseBR2015 <- transform(BaseBR2015, tempo=tempo, censura=censura)
+names(BaseBR2015)
+###############################
+#Aplicando o desenho da amostra. 
+###############################
+desenho = svydesign(id =~ escola,
+                    
+  strata =~ ESTRATOGEOREG,
+  weights =~ as.numeric(PESO),
+  data = BaseBR2015,
+  nest = T)
+
+desenhobr = subset(desenho, PAIS == 76) 
+
+desenho_RJ = subset(desenho, UFCENSO == 33 & TIPO_MUNIC == 1)
+```
+
+```{r}
+ekm = svykm(Surv(tempo,censura)~1,design = desenho_RJ )
+ekm
+print("A mediana da iniciação sexual é 17")
+#Mediana da iniciação sexual é 17 
+
+```
+
+
+### Sexo
+```{r}
+ekm.sexo = svykm(Surv(tempo,censura)~VB01001,design=desenho_RJ)
+ekm.sexo
+
+print("Sexo masculino tem mediana 16")
+print("Sexo feminino tem mediana 18")
+#Masculino, mediana = 16 
+#Feminino, mediana = 18 
+
+```
+
+
+
+### Uso de drogas
+```{r}
+ekm.drogas = svykm(Surv(tempo,censura)~VB06001,design=desenho_RJ)
+ekm.drogas 
+
+print("Sim, mediana = 14")
+print("Não, mediana = 18")
+print("Não informado, mediana = 14")
+
+
+```
+
+### Dependencia administrativa da escola.
+```{r}
+ekm.depAdm = svykm(Surv(tempo,censura)~V0007,design=desenho_RJ)
+ekm.depAdm
+
+print("Pública, mediana = 17")
+print("Particular, mediana = inf")
+
+```
+
+### Consumo de bebida alcoolica. 
+```{r}
+ekm.bebidaAlcoolica = svykm(Surv(tempo,censura)~VB05002,design=desenho_RJ)
+ekm.bebidaAlcoolica
+
+print("Sim, mediana = 16")
+print("Não, mediana = inf")
+```
+
+### Orientação sobre prevenção de gravidez.
+```{r}
+ekm.OrientacaoGravidez = svykm(Surv(tempo,censura)~VB08008,design=desenho_RJ)
+ekm.OrientacaoGravidez
+
+print("SIM, mediana = 18")
+print("Não, mediana = 16")
+print("Não sei, mediana = inf")
+print("Não informado, mediana = 11")
+```
+
+### Orientação sobre doenças sexualmente transmissiveis. 
+```{r}
+ekm.OrientacaoDoencas = svykm(Surv(tempo,censura)~VB08009,design=desenho_RJ)
+ekm.OrientacaoDoencas
+
+print("sim, mediana = 18")
+print("Não, mediana = 16")
+print("Não sei, mediana = inf")
+print("Não informado, mediana = 11")
+```
+
+### Orientação sobre como conseguir preservativos gratuitamente  
+```{r}
+ekm.OrientacaoPreservativo = svykm(Surv(tempo,censura)~VB08010,design=desenho_RJ)
+ekm.OrientacaoPreservativo
+
+print("Sim, mediana = 18")
+print("Não, mediana = 17")
+print("Não sei, mediana = inf")
+print("Não informado, mediana = 11")
+
+```
+
+### #NOS ÚLTIMOS 30 DIAS, com que frequência seus pais ou responsáveis sabiam realmente o que você estava fazendo em #seu tempo livre?  
+```{r}
+ekm.PaisTempoLivre = svykm(Surv(tempo,censura)~VB07002,design=desenho_RJ)
+ekm.PaisTempoLivre
+
+print("Nunca, mediana = 16 ")
+
+print("Raramente, mediana = 16 ")
+
+print("As vezes, mediana = 16 ") 
+ 
+print("Na maior parte do tempo, mediana = 17: ")
+
+
+print("Sempre, mediana = inf ") 
+
+print("Não informado, mediana = 14 ")
+
+```
+
+### Morar com o pai
+```{r}
+ekm.pai = svykm(Surv(tempo,censura)~VB01007,design=desenho_RJ) 
+ekm.pai
+print("Sim, mediana = 17 ")
+
+print("Não, mediana = 17 ")
+
+```
+
+
+### Morar com a mãe
+```{r}
+ekm.mae = svykm(Surv(tempo,censura)~VB01006,design=desenho_RJ) 
+ekm.mae
+
+print("Sim, mediana = 17 ")
+
+print("Não, mediana = 16 ")
+ 
+
+```
+
+### Voce possui algum trabalho, emprego ou negocio ? 
+```{r}
+ekm.trabalho = svykm(Surv(tempo,censura)~VB01011,design=desenho_RJ) 
+ekm.trabalho
+
+print("Sim, mediana = 15")
+print("Não, mediana = inf")
+
+```
+
+###  Alguma vez na vida, você já fumou cigarro, mesmo uma ou duas tragadas? 
+```{r}
+ekm.cigarro = svykm(Surv(tempo,censura)~VB04001,design=desenho_RJ) 
+ekm.cigarro
+
+print("Sim, mediana = 14")
+print("Não, mediana = 18")
+```
+
+### Você já sofreu bullying?
+```{r}
+ekm.bullying = svykm(Surv(tempo,censura)~VB07010,design=desenho_RJ) 
+ekm.bullying
+
+print("Sim, mediana = 18")
+
+print("Não, mediana = 17 ")
+
+print("Não sei, mediana = inf ")
+
+print("Não informado, mediana = inf")
+
+
+```
+
+### Alguma vez na vida você foi forçado a ter relação sexual? 
+```{r}
+ekm.relacaoForcada = svykm(Surv(tempo,censura)~VB09016,design=desenho_RJ) 
+ekm.relacaoForcada
+
+print("Sim, mediana = 14")
+print("Não, mediana = 17")
+print("Não informado, mediana = 13")
+```
+
+### NOS ÚLTIMOS 12 MESES com que frequência tem se sentido sozinho(a)? 
+```{r}
+ekm.sozinho = svykm(Surv(tempo,censura)~VB12001,design=desenho_RJ) 
+ekm.sozinho
+
+print("Nunca, mediana = 17 ")
+
+
+print("Raramente, mediana = inf  ")
+
+print("As vezes, mediana = 17  ") 
+
+print("Na maior parte do tempo, mediana = 16 ")
+
+ 
+print("Sempre, mediana = inf ") 
+
+
+
+```
+
+### Quantos amigos proximos voce tem ?
+```{r}
+ekm.amigos = svykm(Surv(tempo,censura)~VB12003,design=desenho_RJ) 
+ekm.amigos
+
+print("0, mediana = 17 ") 
+
+print("1, mediana = inf ")
+
+print("2, mediana = inf")
+
+print("3 ou mais,mediana = 17 ")
+ 
+print("Não informado, mediana = 9 ")
+
+```
+
+
+
+
+### Como você classificaria seu estado de saúde? 
+```{r}
+ekm.saude = svykm(Surv(tempo,censura)~VB13005,design=desenho_RJ) 
+ekm.saude
+
+print("Muito bom, mediana = 18")
+
+print("bom, mediana = 17")
+ 
+print("Regular, mediana = inf ")
+
+print("Ruim, mediana = inf")
+
+print("Muito Ruim, mediana = 15") 
+ 
+print("Não informado, mediana = 13")
+
+```
+
+
