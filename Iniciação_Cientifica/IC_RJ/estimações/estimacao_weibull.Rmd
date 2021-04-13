@@ -1,0 +1,138 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+################################
+# Carregando pacotes necessários.
+################################
+library(srvyr)
+library("dplyr")
+library("readxl")
+library(survival)
+library(survey)
+library(flexsurv)
+library(devtools)
+
+
+BaseBR2015 = read.csv2(file = 'PENSE.csv',header=T, sep=";")
+attach(BaseBR2015)
+
+i = 1 
+tempo = c()
+censura = c()
+while (i <= length(BaseBR2015$VB08002)){
+  
+  if (BaseBR2015$VB08002[i] == -1){
+    
+    tempo = append(tempo,BaseBR2015$VB01003[i])
+    censura = append(censura, 0)
+    i = i + 1
+  }  
+  
+  
+  else if (BaseBR2015$VB08002[i]>=9 && BaseBR2015$VB08002[i]<=18){
+    
+    tempo = append(tempo,BaseBR2015$VB08002[i])
+    censura = append(censura, 1)
+    i = i + 1
+  }
+    
+  
+  else if (BaseBR2015$VB08002[i] == 99 || BaseBR2015$VB08001[i] == 99){
+    tempo = append(tempo, NA)
+    censura = append(censura, NA) # o ERRO ESTÃ NO NA COMO STRING
+    i = i + 1
+    
+  }
+}
+  
+BaseBR2015 <- transform(BaseBR2015, tempo=tempo, censura=censura)
+names(BaseBR2015)
+
+desenho = svydesign(id =~ escola,
+                    
+  strata =~ ESTRATOGEOREG,
+  weights =~ as.numeric(PESO),
+  data = BaseBR2015,
+  nest = T)
+desenho_RJ = subset(desenho, UFCENSO == 33 & TIPO_MUNIC == 1) 
+```
+
+```{r}
+ekm = svykm(Surv(tempo,censura)~1,design = desenho_RJ )
+b = plot(ekm,  xlab="Tempo (anos)",xlim = c(7,19), ylab="S(t) estimada")
+Legenda = c("Kaplan-Meier ")
+legend("bottomleft", Legenda)
+```
+
+### Estimação dos parametros e intervalo de confiança do paramêtro
+```{r}
+ajuste_wei = svysurvreg(Surv(tempo,censura)~1, design = desenho_RJ, dist='weibull')
+ajuste_wei
+
+print("------------------------------------------------------------------------")
+alfa_wei=exp(ajuste_wei$coefficients[1]) 
+gama_wei=1/ajuste_wei$scale
+cbind(gama_wei,alfa_wei)
+
+print("------------------------------------------------------------------------")
+
+varalfa_wei=ajuste_wei$var[1,1]*exp(ajuste_wei$coefficients[1])^2
+varalfa_wei
+
+print("------------------------------------------------------------------------")
+
+IC_alfa=c(alfa_wei-qnorm(0.975)*sqrt(varalfa_wei),alfa_wei+qnorm(0.975)*sqrt(varalfa_wei))
+IC_alfa
+
+print("------------------------------------------------------------------------")
+
+vargama_wei=ajuste_wei$var[2,2]*(-1/ajuste_wei$scale^2)^2
+vargama_wei
+
+print("------------------------------------------------------------------------")
+
+IC_gama=c(gama_wei-qnorm(0.975)*sqrt(vargama_wei),gama_wei+qnorm(0.975)*sqrt(vargama_wei))
+IC_gama
+```
+
+### Estimação do tempo médio da iniciação sexual pela weibull
+```{r}
+E_T=alfa_wei*gamma(1+1/gama_wei)
+E_T
+
+```
+
+### Estimando a função de taxa de falha:
+```{r}
+lambda_wei = function(t){gama_wei/alfa_wei^gama_wei*t^(gama_wei-1)}
+
+#lambda_wei(t=14) estimando a taxa de falha para t = 14 anos 
+
+plot(lambda_wei,ylab=expression(lambda(t)),xlab="t (em meses)",xlim=c(0,45))
+
+``` 
+
+
+### Estimando o percentil 100p%:
+
+```{r}
+perc_wei = function(p){alfa_wei*(-log(1-p))^(1/gama_wei)}
+
+perc_wei(p=0.75) 
+# em 16.90 anos , 75% terão iniciado a vida sexual
+
+plot(perc_wei,ylab="tp (em anos)",xlab="p") 
+```
+
+### Estimando a função de sobrevivência
+```{r}
+S_wei = function(t){exp(-(t/alfa_wei)^gama_wei)}
+
+S_wei(t=5) # A chance de não ter iniciado a vida sexual até os 5 anos é de   0.9999873  
+S_wei(t=15) # A chance de não ter iniciado a vida sexual até os 15 é de 0.640815 
+
+```
