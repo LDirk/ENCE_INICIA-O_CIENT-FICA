@@ -1,0 +1,20 @@
+---
+title: "Variavel: Com quem mora?"
+output: html_notebook
+---
+
+
+
+# Criando a variável "com quem mora"? 
+```{r}
+library(srvyr)
+library("dplyr")
+library("readxl")
+library(survival)
+library(survey)
+library(flexsurv)
+library(devtools)
+
+
+```
+
