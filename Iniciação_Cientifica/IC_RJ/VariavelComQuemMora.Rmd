@@ -15,6 +15,175 @@ library(survey)
 library(flexsurv)
 library(devtools)
 
+BaseBR2015 = read.csv2(file = 'PENSE.csv',header=T, sep=";")
+attach(BaseBR2015) 
+
+```
+
+
+# Observação length(BaseBR2015$VB01007) == length(BaseBR2015$VB01006) 
+
+```{r}
+
+mora = c()
+
+for (x in 1:length(BaseBR2015$VB01007)){
+  
+  #Mora com pai e Mãe
+  
+  if (BaseBR2015$VB01007[x] == 1 && BaseBR2015$VB01006[x]==1){
+    mora = append(mora,1)
+  }
+  
+  # Mora somente com o pai
+  else if (BaseBR2015$VB01007[x] == 1 && ( BaseBR2015$VB01006[x]== 2 || BaseBR2015$VB01006[x] == 99 )){
+    mora = append(mora,2)
+  }
+  
+  # Mora somente com a mãe
+  else if ((BaseBR2015$VB01007[x]==2 || BaseBR2015$VB01007[x] == 99) && BaseBR2015$VB01006[x] == 1){
+    mora = append(mora,3)
+  }                                                             
+  
+  # Nem pai e Nem Mãe
+  else if (BaseBR2015$VB01007[x] == 2 && BaseBR2015$VB01006[x]== 2 ){
+    mora = append(mora,4)
+  }
+  
+  # Não informado
+  else if (BaseBR2015$VB01007[x] == 99 && BaseBR2015$VB01006[x]==99){
+    mora = append(mora,99)
+  }
+  
+}
+
+while (length(mora)<102072 ){
+  mora = append(mora,99)
+}
+
+
+
+```
+
+
+```{r}
+i = 1 
+tempo = c()
+censura = c()
+while (i <= length(BaseBR2015$VB08002)){
+  
+  if (BaseBR2015$VB08002[i] == -1){
+    
+    tempo = append(tempo,BaseBR2015$VB01003[i])
+    censura = append(censura, 0)
+    i = i + 1
+  }  
+  
+  
+  else if (BaseBR2015$VB08002[i]>=9 && BaseBR2015$VB08002[i]<=18){
+    
+    tempo = append(tempo,BaseBR2015$VB08002[i])
+    censura = append(censura, 1)
+    i = i + 1
+  }
+    
+  
+  else if (BaseBR2015$VB08002[i] == 99 || BaseBR2015$VB08001[i] == 99){
+    tempo = append(tempo, 0) # Se deixar NA o logrank da erro
+    censura = append(censura, 0) # o ERRO ESTÃ NO NA COMO STRING
+    i = i + 1
+    
+  }
+}
+```
+
+
+```{r}
+BaseBR2015 = transform(BaseBR2015, tempo=tempo, censura=censura, mora = mora)
+names(BaseBR2015)
+
+```
+
+```{r}
+desenho = svydesign(id =~ escola,
+                    
+  strata =~ ESTRATOGEOREG,
+  weights =~ as.numeric(PESO),
+  data = BaseBR2015,
+  nest = T)
+
+desenhoRJ = subset(desenho, UFCENSO == 33 & TIPO_MUNIC == 1)
+
+
+```
+
+# Distribuição de frequencias 
+
+```{r}
+
+svytable(~factor(mora),desenhoRJ)
+
+
+morar = c("Pai e mãe", "So pai","So mãe", "Nem pai e nem mãe")
+
+valores = c( 39006.945 , 3574.549, 25429.862 , 3031.363  )
+
+porce = 100/sum(valores) 
+porcentagem = valores*porce
+
+tabela = data.frame(MORA_Com = morar, Valores = valores, Porcentagem = porcentagem)
+
+tabela
+
+
+```
+
+```{r}
+ekm = svykm(Surv(tempo,censura)~1,design = desenhoRJ )
+
+```
+
+```{r}
+ekm.mora = svykm(Surv(tempo,censura)~mora,design=desenhoRJ)
+
+plot(ekm.mora,xlab = "Tempo (anos)",ylab = "S(t) estimada",pars=list(lty=c(1,1,2,2),col=c("black","red","black","red")))
+
+Legenda<-c(" Pai e Mãe ","Pai " , " Mãe" ,"Nenhum dos dois ")
+
+legend("bottomleft", Legenda,lwd=c(1,1),cex=0.7,inset=0.00,col=c(1,1,2,2),bty="n", lty = c(1,1,2,2))
+```
+#Tempo médio 
+```{r}
+tempm = function(var){
+        aprox = c()
+        for (j in 1:length(var$time)-1) {
+                stj = var$surv[j]
+                tj1 = var$time[j+1]
+                tj=   var$time[j]     
+                aprox[j] = stj*(tj1-tj) 
+        }
+        med = var$time[1] + sum(aprox)  
+        med
+}
+ekm.mora = svykm(Surv(tempo,censura)~mora,design=desenhoRJ)
+
+tempm(ekm.mora$'1')
+tempm(ekm.mora$'2')
+tempm(ekm.mora$'3')
+tempm(ekm.mora$'4')
+
+
+```
+
+# tempo mediano
+```{r}
+ekm.mora
+```
+
+# teste de log rank 
+```{r}
+ekm.mora = svykm(Surv(tempo,censura)~mora,design=desenhoRJ)
+svylogrank(Surv(tempo,censura)~mora,design=desenhoRJ)
 
 ```
 
